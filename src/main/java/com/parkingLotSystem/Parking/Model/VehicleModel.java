@@ -12,7 +12,6 @@ import lombok.*;
 public class VehicleModel {
     private String registrationNumber;
     private VehicleType vehicleType;
-    private Integer levelId;
     private Integer slotId;
 }
 

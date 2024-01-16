@@ -37,13 +37,12 @@ public class ParkingServiceImpl implements ParkingService {
         Slot getAvailableSlot = getAvailableSlot(vehicleModel.getVehicleType());
         if (getAvailableSlot != null) {
             Vehicle vehicle = Vehicle.builder().registrationNumber(vehicleModel.getRegistrationNumber())
-                    .levelId(getAvailableSlot.getLevelId())
                     .slotId(getAvailableSlot.getSlotId())
                     .vehicleType(vehicleModel.getVehicleType()).build();
             vehicleRepository.save(vehicle);
 
             return new Response<>(VehicleModel.builder().registrationNumber(vehicle.getRegistrationNumber())
-                    .vehicleType(vehicle.getVehicleType()).levelId(vehicle.getLevelId())
+                    .vehicleType(vehicle.getVehicleType())
                     .slotId(vehicle.getSlotId()).build());
         }
         return new Response<>("No Slots Available! ", HttpStatus.NOT_FOUND);
@@ -66,8 +65,7 @@ public class ParkingServiceImpl implements ParkingService {
         Optional<Vehicle> vehicle = vehicleRepository.findById(registrationNumber);
         VehicleModel vehicleModel = (vehicle.map(value -> new VehicleModel(
                         value.getRegistrationNumber(), value.getVehicleType(),
-                        value.getLevelId(), value.getSlotId()))
-                .orElse(null));
+                        value.getSlotId())).orElse(null));
         return vehicleModel != null ? new Response<>(vehicleModel)
                 : new Response<>("Vehicle Not Found", HttpStatus.NOT_FOUND);
 
@@ -77,7 +75,7 @@ public class ParkingServiceImpl implements ParkingService {
         Slot slot = slotRepository.findById(vehicle.getSlotId()).get();
         slot.setOccupied(false);
         slotRepository.save(slot);
-        ParkingLevel parkingLevel = levelRepository.findById(vehicle.getLevelId()).get();
+        ParkingLevel parkingLevel = levelRepository.findById(slot.getLevelId()).get();
         setAvailability(parkingLevel, vehicle.getVehicleType(), false);
         levelRepository.save(parkingLevel);
     }
