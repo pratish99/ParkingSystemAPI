@@ -1,9 +1,7 @@
 package com.parkingLotSystem.Parking.Service.Impl;
-import ch.qos.logback.classic.model.LevelModel;
 import com.parkingLotSystem.Parking.Entity.ParkingLevel;
 import com.parkingLotSystem.Parking.Entity.Slot;
 import com.parkingLotSystem.Parking.Entity.Vehicle;
-import com.parkingLotSystem.Parking.Entity.VehicleType;
 import com.parkingLotSystem.Parking.Model.ParkingLevelModel;
 import com.parkingLotSystem.Parking.Repository.LevelRepository;
 import com.parkingLotSystem.Parking.Repository.SlotRepository;
