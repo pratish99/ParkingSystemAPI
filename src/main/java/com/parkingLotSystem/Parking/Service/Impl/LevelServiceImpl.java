@@ -68,9 +68,6 @@ public class LevelServiceImpl implements LevelService {
     @Override
     public Response<List<ParkingLevelModel>> getAllLevels() {
         List<ParkingLevel> levels = levelRepository.findAll();
-
-
-
         return new Response<>(levels.stream().map(level -> new ParkingLevelModel(level.getLevelId(),
                             level.getBikeAvailable(),level.getCarAvailable(),level.getBusAvailable(),
                             level.getBikeOccupied(),level.getCarOccupied(),level.getBusOccupied())).toList());
