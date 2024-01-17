@@ -14,6 +14,8 @@ import com.parkingLotSystem.Parking.Service.ParkingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Optional;
 
 import static com.parkingLotSystem.Parking.Entity.VehicleType.*;
@@ -81,41 +83,34 @@ public class ParkingServiceImpl implements ParkingService {
     }
 
     private Slot getAvailableSlot(VehicleType type) {
-        for (Slot slot : slotRepository.findAll()) {
-            if (!slot.getOccupied() && slot.getSlotType() == type) {
-                slot.setOccupied(true);
-                Optional<ParkingLevel> parkingLevel = levelRepository.findById(slot.getLevelId());
-                ParkingLevel entity = parkingLevel.get();
-                setAvailability(entity, type, true);
-                levelRepository.save(entity);
-                return slot;
-            }
-        }
-        return null;
+        List<Slot> slot = slotRepository.findVacant(type);
+        if(slot.isEmpty()) return null;
+        Slot availableSlot = slot.get(constants.ZERO);
+        availableSlot.setOccupied(true);
+        Optional<ParkingLevel> parkingLevel = levelRepository.findById(availableSlot.getLevelId());
+        ParkingLevel entity = parkingLevel.get();
+        setAvailability(entity, type, true);
+        levelRepository.save(entity);
+        return availableSlot;
     }
 
     private void setAvailability(ParkingLevel entity, VehicleType type, Boolean park) {
         if (park) {
+
             if (type == Bike) {
-                entity.setBikeAvailable(entity.getBikeAvailable() - constants.ONE);
-                entity.setBikeOccupied(entity.getBikeOccupied() + constants.ONE);
+                levelRepository.updateLevelBike(entity.getLevelId());
             } else if (type == Car) {
-                entity.setCarAvailable(entity.getCarAvailable() - constants.ONE);
-                entity.setCarOccupied(entity.getCarOccupied() + constants.ONE);
+                levelRepository.updateLevelCar(entity.getLevelId());
             } else {
-                entity.setBusAvailable(entity.getBusAvailable() - constants.ONE);
-                entity.setBusOccupied(entity.getBusOccupied() + constants.ONE);
+                levelRepository.updateLevelBus(entity.getLevelId());
             }
         } else {
             if (type == Bike) {
-                entity.setBikeAvailable(entity.getBikeAvailable() + constants.ONE);
-                entity.setBikeOccupied(entity.getBikeOccupied() - constants.ONE);
+                levelRepository.decreaseLevelBike(entity.getLevelId());
             } else if (type == Car) {
-                entity.setCarAvailable(entity.getCarAvailable() + constants.ONE);
-                entity.setCarOccupied(entity.getCarOccupied() - constants.ONE);
+                levelRepository.decreaseLevelCar(entity.getLevelId());
             } else {
-                entity.setBusAvailable(entity.getBusAvailable() + constants.ONE);
-                entity.setBusOccupied(entity.getBusOccupied() - constants.ONE);
+                levelRepository.decreaseLevelBus(entity.getLevelId());
             }
         }
     }

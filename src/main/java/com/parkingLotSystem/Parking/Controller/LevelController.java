@@ -31,4 +31,10 @@ public class LevelController {
         Response<List<ParkingLevelModel>> response = LevelService.getAllLevels();
         return new ResponseEntity<>(response.getReturnObject(), response.getHttpStatus());
     }
+
+    /*@GetMapping("/statistics")
+    public ResponseEntity getStatistics(){
+        Response response = LevelService.getStatistics();
+        return new ResponseEntity<>(response.getReturnObject(), response.getHttpStatus());
+    }*/
 }

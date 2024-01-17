@@ -3,9 +3,12 @@ package com.parkingLotSystem.Parking.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name="PARKING_LEVEL")
 @Builder
+@NamedEntityGraph(name = "Level.slots", attributeNodes = {@NamedAttributeNode("slotList")})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,4 +30,8 @@ public class ParkingLevel {
     private Integer carAvailable;
     @Column(name = "BUS_AVAILABLE")
     private Integer busAvailable;
+    @OneToMany
+    @JoinColumn(name = "LEVEL_ID", referencedColumnName = "ID")
+    private List<Slot> slotList;
+
 }

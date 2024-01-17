@@ -20,4 +20,7 @@ public class Vehicle {
     private VehicleType vehicleType;
     @Column(name = "SLOT_ID")
     private Integer slotId;
+    /*@OneToOne
+    @JoinColumn(name = "ID", referencedColumnName = "SLOT_ID")
+    private Slot slot;*/
 }

@@ -29,6 +29,22 @@ dependencies {
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	/*implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.hibernate:hibernate-core:5.6.3.Final' // Replace with the version you are using
+	implementation 'org.hibernate:hibernate-entitymanager:5.6.3.Final' // If you are using Hibernate EntityManager
+	implementation 'com.h2database:h2:1.4.200' // Example database dependency, replace with your preferred database
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.5.5'
+	implementation 'org.springframework.boot:spring-boot-starter-web:2.5.5'
+	implementation('org.hibernate:hibernate-core:5.6.3.Final') {
+		exclude group: 'jakarta.persistence', module: 'jakarta.persistence-api'
+	}*/
 }
 
 tasks.named('test') {

@@ -10,5 +10,6 @@ public interface LevelService{
     Response<String> addLevel(ParkingLevelModel parkingLevelModel);
     Response<String> decreaseLevel(Integer id);
     Response<List<ParkingLevelModel>> getAllLevels();
+    /*Response getStatistics();*/
 
 }
