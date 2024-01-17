@@ -47,8 +47,8 @@ public interface LevelRepository extends JpaRepository<ParkingLevel, Integer> {
 
 
 
-    //@EntityGraph("Level.slots")
-    @Query("select l from ParkingLevel l left join fetch l.slotList")
+    @EntityGraph("Level.slots")
+    @Query("select l from ParkingLevel l left join fetch l.slotList s left join fetch s.vehicleDetails where s.vehicleDetails is not null")
     List<ParkingLevel> findAllLevels();
 
 }

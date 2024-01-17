@@ -1,5 +1,7 @@
 package com.parkingLotSystem.Parking.Entity;
 
+import com.parkingLotSystem.Parking.Model.SlotModel;
+import com.parkingLotSystem.Parking.Model.VehicleModel;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,5 +35,8 @@ public class ParkingLevel {
     @OneToMany
     @JoinColumn(name = "LEVEL_ID", referencedColumnName = "ID")
     private List<Slot> slotList;
+    @OneToMany
+    @JoinColumn(name = "LEVEL_ID", referencedColumnName = "ID")
+    private List<Vehicle> vehicleList;
 
 }

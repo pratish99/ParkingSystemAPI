@@ -4,18 +4,20 @@ import com.parkingLotSystem.Parking.Entity.ParkingLevel;
 import com.parkingLotSystem.Parking.Entity.Slot;
 import com.parkingLotSystem.Parking.Entity.Vehicle;
 import com.parkingLotSystem.Parking.Model.ParkingLevelModel;
+import com.parkingLotSystem.Parking.Model.SlotModel;
+import com.parkingLotSystem.Parking.Model.VehicleModel;
 import com.parkingLotSystem.Parking.Repository.LevelRepository;
 import com.parkingLotSystem.Parking.Repository.SlotRepository;
 import com.parkingLotSystem.Parking.Repository.VehicleRepository;
 import com.parkingLotSystem.Parking.Responses.Response;
 import com.parkingLotSystem.Parking.Service.LevelService;
-import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 
 import static com.parkingLotSystem.Parking.Entity.VehicleType.*;
@@ -68,12 +70,32 @@ public class LevelServiceImpl implements LevelService {
 
     @Override
     public Response<List<ParkingLevelModel>> getAllLevels() {
-        List<ParkingLevel> levels = levelRepository.findAllLevels();
-        return new Response<>(levels.stream().map(level -> new ParkingLevelModel(level.getLevelId(),
-                            level.getBikeAvailable(),level.getCarAvailable(),level.getBusAvailable(),
-                            level.getBikeOccupied(),level.getCarOccupied(),level.getBusOccupied(),
-                            level.getSlotList()))
-                            .toList());
+        List<ParkingLevelModel> myList = new ArrayList<>();
+        for (ParkingLevel parking : levelRepository.findAllLevels()) {
+            ParkingLevelModel parkingModel = ParkingLevelModel.builder().levelId(parking.getLevelId())
+                    .bikeOccupied(parking.getBikeOccupied())
+                    .carOccupied(parking.getCarOccupied())
+                    .busOccupied(parking.getBusOccupied())
+                    .bikeAvailable(parking.getBikeAvailable())
+                    .carAvailable(parking.getCarAvailable())
+                    .busAvailable(parking.getBusAvailable())
+                    .slotList(listOfSlotModels(parking.getSlotList()))
+                    .build();
+            myList.add(parkingModel);
+        }
+        if (!myList.isEmpty()) return new Response<>(myList);
+        return new Response<>(null, HttpStatus.NO_CONTENT);
+
+    }
+
+    private List<SlotModel> listOfSlotModels(List<Slot> list) {
+        return list.stream().map(x -> new SlotModel(x.getSlotId(),
+                                x.getLevelId(), x.getSlotType(), x.getOccupied(),
+                                Optional.ofNullable(x.getVehicleDetails())
+                                .map(value -> new VehicleModel(value.getRegistrationNumber(),
+                                value.getVehicleType(),value.getSlotId()))
+                                .orElse(null)
+                                )).toList();
     }
 
     private void addSlots(ParkingLevel parkingLevel){

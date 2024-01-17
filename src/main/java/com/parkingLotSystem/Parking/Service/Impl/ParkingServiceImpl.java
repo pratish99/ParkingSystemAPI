@@ -42,7 +42,6 @@ public class ParkingServiceImpl implements ParkingService {
                     .slotId(getAvailableSlot.getSlotId())
                     .vehicleType(vehicleModel.getVehicleType()).build();
             vehicleRepository.save(vehicle);
-
             return new Response<>(VehicleModel.builder().registrationNumber(vehicle.getRegistrationNumber())
                     .vehicleType(vehicle.getVehicleType())
                     .slotId(vehicle.getSlotId()).build());
@@ -69,7 +68,7 @@ public class ParkingServiceImpl implements ParkingService {
                         value.getRegistrationNumber(), value.getVehicleType(),
                         value.getSlotId())).orElse(null));
         return vehicleModel != null ? new Response<>(vehicleModel)
-                : new Response<>("Vehicle Not Found", HttpStatus.NOT_FOUND);
+                                    : new Response<>("Vehicle Not Found", HttpStatus.NOT_FOUND);
 
     }
 
@@ -96,7 +95,6 @@ public class ParkingServiceImpl implements ParkingService {
 
     private void setAvailability(ParkingLevel entity, VehicleType type, Boolean park) {
         if (park) {
-
             if (type == Bike) {
                 levelRepository.updateLevelBike(entity.getLevelId());
             } else if (type == Car) {

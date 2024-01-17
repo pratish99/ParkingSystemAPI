@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, String> {
-    /*@Query("SELECT t FROM Thing t WHERE t.SLOT_ID = slotId")
-    Vehicle findBySlot(Integer slotId);*/
+
 }

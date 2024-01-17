@@ -23,6 +23,6 @@ public class Slot {
     private VehicleType slotType;
     @Column(name = "OCCUPIED")
     private Boolean occupied;
-   /* @OneToOne(mappedBy = "slot")
-    private Vehicle vehicle;*/
+    @OneToOne(mappedBy = "slot")
+    private Vehicle vehicleDetails;
 }

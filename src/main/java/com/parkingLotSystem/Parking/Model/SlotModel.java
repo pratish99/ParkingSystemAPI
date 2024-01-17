@@ -16,4 +16,5 @@ public class SlotModel {
     private Integer levelId;
     private VehicleType slotType;
     private Boolean occupied;
+    private VehicleModel vehicleDetails;
 }
