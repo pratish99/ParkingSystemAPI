@@ -18,9 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-
-import static com.parkingLotSystem.Parking.Entity.VehicleType.*;
+import static com.parkingLotSystem.Parking.Enumerators.VehicleType.*;
 
 
 @Service
@@ -32,6 +30,19 @@ public class LevelServiceImpl implements LevelService {
     @Autowired
     private VehicleRepository vehicleRepository;
     Constants constants = new Constants();
+
+    @Override
+    public void save(ParkingLevelModel parkingLevelModel) {
+        levelRepository.save(ParkingLevel.builder()
+                .levelId(parkingLevelModel.getLevelId())
+                .bikeOccupied(parkingLevelModel.getBikeOccupied())
+                .carOccupied(parkingLevelModel.getCarOccupied())
+                .busOccupied(parkingLevelModel.getBusOccupied())
+                .bikeAvailable(parkingLevelModel.getBikeAvailable())
+                .carAvailable(parkingLevelModel.getCarAvailable())
+                .busAvailable(parkingLevelModel.getBusAvailable())
+                .build());
+    }
 
     @Override
     public Response<String> addLevel(ParkingLevelModel parkingLevelModel) {

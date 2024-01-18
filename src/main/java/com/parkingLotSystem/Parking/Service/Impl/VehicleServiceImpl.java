@@ -4,13 +4,13 @@ import com.parkingLotSystem.Parking.Constants.Constants;
 import com.parkingLotSystem.Parking.Entity.ParkingLevel;
 import com.parkingLotSystem.Parking.Entity.Slot;
 import com.parkingLotSystem.Parking.Entity.Vehicle;
-import com.parkingLotSystem.Parking.Entity.VehicleType;
+import com.parkingLotSystem.Parking.Enumerators.VehicleType;
 import com.parkingLotSystem.Parking.Model.VehicleModel;
 import com.parkingLotSystem.Parking.Repository.LevelRepository;
 import com.parkingLotSystem.Parking.Repository.SlotRepository;
 import com.parkingLotSystem.Parking.Repository.VehicleRepository;
 import com.parkingLotSystem.Parking.Responses.Response;
-import com.parkingLotSystem.Parking.Service.ParkingService;
+import com.parkingLotSystem.Parking.Service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,10 +18,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static com.parkingLotSystem.Parking.Entity.VehicleType.*;
+import static com.parkingLotSystem.Parking.Enumerators.VehicleType.*;
 
 @Service
-public class ParkingServiceImpl implements ParkingService {
+public class VehicleServiceImpl implements VehicleService {
 
     @Autowired
     private LevelRepository levelRepository;
@@ -30,6 +30,15 @@ public class ParkingServiceImpl implements ParkingService {
     @Autowired
     private VehicleRepository vehicleRepository;
     private final Constants constants = new Constants();
+
+    @Override
+    public void save(VehicleModel vehicleModel) {
+        vehicleRepository.save(Vehicle.builder()
+                .registrationNumber(vehicleModel.getRegistrationNumber())
+                .slotId(vehicleModel.getSlotId())
+                .vehicleType(vehicleModel.getVehicleType()).build());
+
+    }
 
     @Override
     public Response parkVehicle(VehicleModel vehicleModel) {

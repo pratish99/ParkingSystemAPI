@@ -1,7 +1,6 @@
 package com.parkingLotSystem.Parking.Model;
 
-import com.parkingLotSystem.Parking.Entity.VehicleType;
-import jakarta.persistence.Column;
+import com.parkingLotSystem.Parking.Enumerators.VehicleType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

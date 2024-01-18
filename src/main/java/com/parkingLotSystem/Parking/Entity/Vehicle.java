@@ -1,5 +1,6 @@
 package com.parkingLotSystem.Parking.Entity;
 
+import com.parkingLotSystem.Parking.Enumerators.VehicleType;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,7 +1,7 @@
 package com.parkingLotSystem.Parking.Controller;
 import com.parkingLotSystem.Parking.Model.VehicleModel;
 import com.parkingLotSystem.Parking.Responses.Response;
-import com.parkingLotSystem.Parking.Service.ParkingService;
+import com.parkingLotSystem.Parking.Service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class ParkingController {
     @Autowired
-    private ParkingService parkingService;
+    private VehicleService parkingService;
 
     @PostMapping("/park")
     public ResponseEntity parkVehicle(@RequestBody VehicleModel vehicleModel){
