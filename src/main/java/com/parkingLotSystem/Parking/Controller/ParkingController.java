@@ -28,4 +28,10 @@ public class ParkingController {
         Response response = parkingService.unparkVehicle(registrationNumber);
         return new ResponseEntity<>(response.getReturnObject(), response.getHttpStatus());
     }
+    @DeleteMapping("/deleteLevel/{id}")
+    public ResponseEntity<String> deleteLevel(@PathVariable Integer id){
+        Response<String> response = parkingService.decreaseLevel(id);
+        return new ResponseEntity<>(response.getReturnObject(), response.getHttpStatus());
+    }
+
 }

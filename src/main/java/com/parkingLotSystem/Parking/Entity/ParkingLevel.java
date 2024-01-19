@@ -36,7 +36,7 @@ public class ParkingLevel {
     @JoinColumn(name = "LEVEL_ID", referencedColumnName = "ID")
     private List<Slot> slotList;
     @OneToMany
-    @JoinColumn(name = "LEVEL_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "SLOT_ID", referencedColumnName = "ID")
     private List<Vehicle> vehicleList;
 
 }

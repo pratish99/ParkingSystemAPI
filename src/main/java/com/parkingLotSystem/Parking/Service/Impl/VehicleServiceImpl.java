@@ -2,14 +2,14 @@ package com.parkingLotSystem.Parking.Service.Impl;
 
 import com.parkingLotSystem.Parking.Constants.Constants;
 import com.parkingLotSystem.Parking.Entity.ParkingLevel;
-import com.parkingLotSystem.Parking.Entity.Slot;
 import com.parkingLotSystem.Parking.Entity.Vehicle;
-import com.parkingLotSystem.Parking.Enumerators.VehicleType;
+import com.parkingLotSystem.Parking.Model.ParkingLevelModel;
+import com.parkingLotSystem.Parking.Model.SlotModel;
 import com.parkingLotSystem.Parking.Model.VehicleModel;
-import com.parkingLotSystem.Parking.Repository.LevelRepository;
-import com.parkingLotSystem.Parking.Repository.SlotRepository;
 import com.parkingLotSystem.Parking.Repository.VehicleRepository;
 import com.parkingLotSystem.Parking.Responses.Response;
+import com.parkingLotSystem.Parking.Service.LevelService;
+import com.parkingLotSystem.Parking.Service.SlotService;
 import com.parkingLotSystem.Parking.Service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,35 +22,28 @@ import static com.parkingLotSystem.Parking.Enumerators.VehicleType.*;
 
 @Service
 public class VehicleServiceImpl implements VehicleService {
-
     @Autowired
-    private LevelRepository levelRepository;
-    @Autowired
-    private SlotRepository slotRepository;
+    private SlotService slotService;
     @Autowired
     private VehicleRepository vehicleRepository;
+
+    @Autowired
+    private LevelService levelService;
     private final Constants constants = new Constants();
-
-    @Override
-    public void save(VehicleModel vehicleModel) {
-        vehicleRepository.save(Vehicle.builder()
-                .registrationNumber(vehicleModel.getRegistrationNumber())
-                .slotId(vehicleModel.getSlotId())
-                .vehicleType(vehicleModel.getVehicleType()).build());
-
-    }
 
     @Override
     public Response parkVehicle(VehicleModel vehicleModel) {
         if (vehicleRepository.existsById(vehicleModel.getRegistrationNumber())) {
             return new Response<>("Vehicle Already Parked! ", HttpStatus.NOT_ACCEPTABLE);
         }
-        Slot getAvailableSlot = getAvailableSlot(vehicleModel.getVehicleType());
+        SlotModel getAvailableSlot = slotService.getAvailableSlot(vehicleModel.getVehicleType());
         if (getAvailableSlot != null) {
+            levelService.updateLevelTable(getAvailableSlot.getLevelId(), vehicleModel.getVehicleType(), true);
             Vehicle vehicle = Vehicle.builder().registrationNumber(vehicleModel.getRegistrationNumber())
                     .slotId(getAvailableSlot.getSlotId())
                     .vehicleType(vehicleModel.getVehicleType()).build();
             vehicleRepository.save(vehicle);
+
             return new Response<>(VehicleModel.builder().registrationNumber(vehicle.getRegistrationNumber())
                     .vehicleType(vehicle.getVehicleType())
                     .slotId(vehicle.getSlotId()).build());
@@ -63,13 +56,12 @@ public class VehicleServiceImpl implements VehicleService {
         if (vehicleRepository.existsById(registrationNumber)) {
             Vehicle vehicle = vehicleRepository.findById(registrationNumber).get();
             vehicleRepository.deleteById(registrationNumber);
-            updateTables(vehicle);
+            SlotModel slotModel = slotService.updateSlotTable(vehicle.getSlotId());
+            levelService.updateLevelTable(slotModel.getLevelId(), slotModel.getSlotType(), false);
             return new Response<>("Vehicle Unparked Successfully");
         }
         return new Response<>("Vehicle Not Found", HttpStatus.NOT_FOUND);
-
     }
-
     @Override
     public Response getVehicle(String registrationNumber) {
         Optional<Vehicle> vehicle = vehicleRepository.findById(registrationNumber);
@@ -80,45 +72,23 @@ public class VehicleServiceImpl implements VehicleService {
                                     : new Response<>("Vehicle Not Found", HttpStatus.NOT_FOUND);
 
     }
-
-    private void updateTables(Vehicle vehicle) {
-        Slot slot = slotRepository.findById(vehicle.getSlotId()).get();
-        slot.setOccupied(false);
-        slotRepository.save(slot);
-        ParkingLevel parkingLevel = levelRepository.findById(slot.getLevelId()).get();
-        setAvailability(parkingLevel, vehicle.getVehicleType(), false);
-        levelRepository.save(parkingLevel);
-    }
-
-    private Slot getAvailableSlot(VehicleType type) {
-        List<Slot> slot = slotRepository.findVacant(type);
-        if(slot.isEmpty()) return null;
-        Slot availableSlot = slot.get(constants.ZERO);
-        availableSlot.setOccupied(true);
-        Optional<ParkingLevel> parkingLevel = levelRepository.findById(availableSlot.getLevelId());
-        ParkingLevel entity = parkingLevel.get();
-        setAvailability(entity, type, true);
-        levelRepository.save(entity);
-        return availableSlot;
-    }
-
-    private void setAvailability(ParkingLevel entity, VehicleType type, Boolean park) {
-        if (park) {
-            if (type == Bike) {
-                levelRepository.updateLevelBike(entity.getLevelId());
-            } else if (type == Car) {
-                levelRepository.updateLevelCar(entity.getLevelId());
-            } else {
-                levelRepository.updateLevelBus(entity.getLevelId());
+    @Override
+    public Response<String> decreaseLevel(Integer id) {
+        if (levelService.existsById(id)) {
+            List<SlotModel> slotModelList = slotService.getSlots(id);
+            for(SlotModel slotModel : slotModelList){
+                vehicleRepository.deleteBySlotId(slotModel.getSlotId());
             }
-        } else {
-            if (type == Bike) {
-                levelRepository.decreaseLevelBike(entity.getLevelId());
-            } else if (type == Car) {
-                levelRepository.decreaseLevelCar(entity.getLevelId());
-            } else {
-                levelRepository.decreaseLevelBus(entity.getLevelId());
-            }
+            slotService.deleteSlots(id);
+            levelService.deleteById(id);
+            return new Response<>("Level Deleted Successfully");
         }
+        return new Response<>("Level Not Found", HttpStatus.NOT_FOUND);
+    }
+
+
+    @Override
+    public void deleteBySlotId(Integer id) {
+        vehicleRepository.deleteBySlotId(id);
     }
 }

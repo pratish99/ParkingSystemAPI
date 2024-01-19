@@ -3,6 +3,7 @@ package com.parkingLotSystem.Parking.Controller;
 import com.parkingLotSystem.Parking.Model.ParkingLevelModel;
 import com.parkingLotSystem.Parking.Responses.Response;
 import com.parkingLotSystem.Parking.Service.LevelService;
+import com.parkingLotSystem.Parking.Service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +21,7 @@ public class LevelController {
         return new ResponseEntity<>(response.getReturnObject(), response.getHttpStatus());
     }
 
-    @DeleteMapping("/deleteLevel/{id}")
-    public ResponseEntity<String> deleteLevel(@PathVariable Integer id){
-        Response<String> response = LevelService.decreaseLevel(id);
-        return new ResponseEntity<>(response.getReturnObject(), response.getHttpStatus());
-    }
+
 
     @GetMapping("/parking-stats")
     public ResponseEntity<List<ParkingLevelModel>> allLevels(){

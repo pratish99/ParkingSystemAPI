@@ -13,4 +13,6 @@ import java.util.List;
 public interface SlotRepository extends JpaRepository<Slot, Integer> {
     @Query("select a from Slot a where a.occupied = false and a.slotType = :vehicleType ")
     List<Slot> findVacant(@Param("vehicleType") VehicleType vehicleType);
+
+    List<Slot> findByLevelId(Integer levelId);
 }
