@@ -145,7 +145,7 @@ public class LevelServiceImpl implements LevelService {
                 x.getLevelId(), x.getSlotType(), x.getOccupied(),
                 Optional.ofNullable(x.getVehicleDetails())
                         .map(value -> new VehicleModel(value.getRegistrationNumber(),
-                                value.getVehicleType(), value.getSlotId()))
+                                value.getVehicleType(), value.getSlotId(), value.getLocalTime()))
                         .orElse(null)
         )).toList();
     }

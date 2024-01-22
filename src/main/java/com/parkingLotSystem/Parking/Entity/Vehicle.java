@@ -4,6 +4,8 @@ import com.parkingLotSystem.Parking.Enumerators.VehicleType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalTime;
+
 @Entity
 @Table(name="VEHICLE")
 @Builder
@@ -21,6 +23,8 @@ public class Vehicle {
     private VehicleType vehicleType;
     @Column(name = "SLOT_ID")
     private Integer slotId;
+    @Column(name = "PARKING_TIME")
+    private LocalTime localTime;
     @OneToOne
     @JoinColumn(name = "SLOT_ID", updatable = false, insertable = false)
     private Slot slot;

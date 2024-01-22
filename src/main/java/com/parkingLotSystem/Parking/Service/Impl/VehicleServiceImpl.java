@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,12 +43,12 @@ public class VehicleServiceImpl implements VehicleService {
             levelService.updateLevelTable(getAvailableSlot.getLevelId(), vehicleModel.getVehicleType(), true);
             Vehicle vehicle = Vehicle.builder().registrationNumber(vehicleModel.getRegistrationNumber())
                     .slotId(getAvailableSlot.getSlotId())
-                    .vehicleType(vehicleModel.getVehicleType()).build();
+                    .vehicleType(vehicleModel.getVehicleType()).localTime(LocalTime.now()).build();
             vehicleRepository.save(vehicle);
 
             return new Response<>(VehicleModel.builder().registrationNumber(vehicle.getRegistrationNumber())
                     .vehicleType(vehicle.getVehicleType())
-                    .slotId(vehicle.getSlotId()).build());
+                    .slotId(vehicle.getSlotId()).localTime(LocalTime.now()).build());
         }
         return new Response<>("No Slots Available! ", HttpStatus.NOT_FOUND);
     }
@@ -67,7 +69,7 @@ public class VehicleServiceImpl implements VehicleService {
         Optional<Vehicle> vehicle = vehicleRepository.findById(registrationNumber);
         VehicleModel vehicleModel = (vehicle.map(value -> new VehicleModel(
                         value.getRegistrationNumber(), value.getVehicleType(),
-                        value.getSlotId())).orElse(null));
+                        value.getSlotId(), value.getLocalTime())).orElse(null));
         return vehicleModel != null ? new Response<>(vehicleModel)
                                     : new Response<>("Vehicle Not Found", HttpStatus.NOT_FOUND);
 
@@ -84,6 +86,14 @@ public class VehicleServiceImpl implements VehicleService {
             return new Response<>("Level Deleted Successfully");
         }
         return new Response<>("Level Not Found", HttpStatus.NOT_FOUND);
+    }
+
+    @Override
+    public List<VehicleModel> allVehicles() {
+        List<Vehicle> vehicles = vehicleRepository.findAll();
+        return vehicles.stream().map(x -> new VehicleModel(x.getRegistrationNumber(),
+                x.getVehicleType(), x.getSlotId(), x.getLocalTime()
+        )).toList();
     }
 
 
